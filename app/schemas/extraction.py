@@ -1,13 +1,11 @@
-from ast import List
-
 from pydantic import BaseModel, Field
 
 
 class ActionItem(BaseModel):
-    task: str = Field(description="Actionable task item")
+    ask: str = Field(description="Actionable task item")
     priority: str = Field(description="Priority level: High, Medium, or Low")
     assignee: str | None = Field(default=None, description="Person responsible if mentioned")
 
 class TaskExtractionResponse(BaseModel):
     summary: str = Field(description="Summary of the task")
-    action_items: List[ActionItem]
+    action_items: list[ActionItem]
