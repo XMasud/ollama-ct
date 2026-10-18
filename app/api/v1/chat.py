@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
+from starlette.responses import StreamingResponse
 
 from app.core.ollama_client import OllamaClient
 from app.schemas.chat import ChatMessageRequest
@@ -36,12 +37,13 @@ async def stream_chat(
     async def event_generator() -> AsyncIterator[str]:
         lines = [first] if first is not None else []
         for line in lines:
-            if stream_token := _extract_token(line):
-                yield stream_token
-            async for stream_token in stream:
-                if stream_token := _extract_token(line):
-                    yield stream_token
+            if token := _extract_token(line):
+                yield token
+        async for line in stream:
+            if token := _extract_token(line):
+                yield token
 
+    return StreamingResponse(event_generator(), media_type="text/plain")
 
 def _extract_token(raw_line: str) -> str:
     try:

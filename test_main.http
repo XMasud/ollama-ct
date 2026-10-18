@@ -1,11 +1,19 @@
-# Test your FastAPI endpoints
-
-GET http://127.0.0.1:8000/
+### Health check
+GET http://127.0.0.1:8000/health
 Accept: application/json
 
-###
-
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
+### Stream a chat response
 
 ###
+# curl -N -X POST http://127.0.0.1:8000/api/v1/chat/stream
+#     -H "Content-Type: application/json"
+#     -d '{"messages":[{"role":"user","content":"Say hello in one sentence."}],"temperature":0.2}'
+POST http://127.0.0.1:8000/api/v1/chat/stream
+Content-Type: application/json
+
+{
+  "messages": [
+    {"role": "user", "content": "Say hello in one sentence."}
+  ],
+  "temperature": 0.2
+}

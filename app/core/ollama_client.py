@@ -10,6 +10,10 @@ class OllamaClient:
         settings = settings or get_settings()
         self.base_url = settings.OLLAMA_BASE_URL.rstrip("/")
         self.model = settings.OLLAMA_MODEL
+        self.think = settings.OLLAMA_THINK
+        self.num_ctx = settings.OLLAMA_NUM_CTX
+        self.num_predict = settings.OLLAMA_NUM_PREDICT
+
         self.timeout = httpx.Timeout(settings.OLLAMA_TIMEOUT, connect=10.0)
 
     async def stream_chat(self, messages: list[dict], temperature: float = 0.2) -> AsyncIterator[str] :
@@ -18,10 +22,13 @@ class OllamaClient:
         payload = {
             "model": self.model,
             "stream": True,
-            "message": messages,
-            "option":{
+            "think": self.think,
+            "messages": messages,
+            "options": {
                 "temperature": temperature,
-            }
+                "num_ctx": self.num_ctx,
+                "num_predict": self.num_predict,
+            },
         }
 
         async with httpx.AsyncClient(timeout= 60) as client:
